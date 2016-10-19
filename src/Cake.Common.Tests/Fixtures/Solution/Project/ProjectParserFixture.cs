@@ -18,12 +18,14 @@ namespace Cake.Common.Tests.Fixtures.Solution.Project
         {
             ProjFilePath = "/Working/Cake.Sample.csproj";
             Pattern = "/Working/Cake.*.csproj";
+            ProjectFileWithWildcardPath = "/Working/Cake.Wildcard.csproj";
 
             var environment = FakeEnvironment.CreateUnixEnvironment();
             Environment = environment;
             var fileSystem = new FakeFileSystem(environment);
             fileSystem.CreateFile(ProjFilePath.FullPath).SetContent(Resources.Csproj_ProjectFile);
             fileSystem.CreateFile("/Working/Cake.Incomplete.csproj").SetContent(Resources.Csproj_IncompleteFile);
+            fileSystem.CreateFile(ProjectFileWithWildcardPath.FullPath).SetContent(Resources.Csproj_ProjectFileWithWildCardContent);
             FileSystem = fileSystem;
 
             Globber = Substitute.For<IGlobber>();
@@ -40,6 +42,12 @@ namespace Cake.Common.Tests.Fixtures.Solution.Project
             return parser.Parse(ProjFilePath);
         }
 
+        public ProjectParserResult ParseWildcard()
+        {
+            var parser = new ProjectParser(FileSystem, Environment);
+            return parser.Parse(ProjectFileWithWildcardPath);
+        }
+
         public ProjectParserResult ParseIncomplete()
         {
             var parser = new ProjectParser(FileSystem, Environment);
@@ -51,5 +59,6 @@ namespace Cake.Common.Tests.Fixtures.Solution.Project
         public IGlobber Globber { get; set; }
         public ICakeLog Log { get; set; }
         public FilePath ProjFilePath { get; set; }
+        public FilePath ProjectFileWithWildcardPath { get; set; }
     }
 }

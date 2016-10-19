@@ -239,6 +239,19 @@ namespace Cake.Common.Tests.Unit.Solution.Project
                 Assert.Equal("{ABC3F1CB-F84E-43ED-A120-0CCFE344D250}", result.ProjectReferences.First().Project);
                 Assert.Equal("Cake.Common", result.ProjectReferences.First().Name);
             }
+
+            [Fact]
+            public void Should_Not_Throw_An_Exception_On_A_Valid_Project()
+            {
+                // Given
+                var fixture = new ProjectParserFixture();
+
+                // When
+                var result = Record.Exception(() => fixture.ParseWildcard());
+
+                // Then
+                Assert.Null(result);
+            }
         }
     }
 }
