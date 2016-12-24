@@ -173,7 +173,7 @@ namespace Cake.Core.Tests.Unit.IO
                 }
             }
 
-            public sealed class WithPredicate
+            public sealed class WithDirectoryPredicate
             {
                 [Fact]
                 public void Should_Return_Paths_Not_Affected_By_Walker_Hints()
@@ -219,6 +219,53 @@ namespace Cake.Core.Tests.Unit.IO
 
                     // Then
                     Assert.Empty(result);
+                }
+            }
+
+            public sealed class WithFilePredicate
+            {
+                [Fact]
+                public void Should_Return_Only_Files_Matching_Predicate()
+                {
+                    // Given
+                    var fixture = new GlobberFixture();
+                    var predicate = new Func<IFile, bool>(i => i.Path.FullPath.EndsWith(".c"));
+
+                    // When
+                    var result = fixture.Match("/Working/**/*.*", null, predicate);
+
+                    // Then
+                    Assert.Equal(5, result.Length);
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qex.c");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Baz/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Baz/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Bar/Qux.c");
+                }
+            }
+
+            public sealed class WithDirectoryAndFilePredicate
+            {
+                [Fact]
+                public void Should_Return_Only_Files_Matching_Predicate()
+                {
+                    // Given
+                    var fixture = new GlobberFixture();
+                    var directoryPredicate = new Func<IFileSystemInfo, bool>(i => i.Path.FullPath.Contains("/Working"));
+                    var filePredicate = new Func<IFile, bool>(i => !i.Path.FullPath.EndsWith(".dll"));
+
+                    // When
+                    var result = fixture.Match("./**/*.*", directoryPredicate, filePredicate);
+
+                    // Then
+                    Assert.Equal(7, result.Length);
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qex.c");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qux.h");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Baz/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Baz/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Bar/Qux.c");
+                    Assert.ContainsFilePath(result, "/Working/Bar/Qux.h");
                 }
             }
 
