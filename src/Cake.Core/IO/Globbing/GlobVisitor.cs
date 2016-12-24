@@ -22,7 +22,17 @@ namespace Cake.Core.IO.Globbing
 
         public IEnumerable<IFileSystemInfo> Walk(GlobNode node, Func<IDirectory, bool> predicate)
         {
-            var context = new GlobVisitorContext(_fileSystem, _environment, predicate);
+            return Walk(node, predicate, null);
+        }
+
+        public IEnumerable<IFileSystemInfo> Walk(GlobNode node, Func<IFile, bool> predicate)
+        {
+            return Walk(node, null, predicate);
+        }
+
+        public IEnumerable<IFileSystemInfo> Walk(GlobNode node, Func<IDirectory, bool> directoryPredicate, Func<IFile, bool> filePredicate)
+        {
+            var context = new GlobVisitorContext(_fileSystem, _environment, directoryPredicate, filePredicate);
             node.Accept(this, context);
             return context.Results;
         }
@@ -113,7 +123,7 @@ namespace Cake.Core.IO.Globbing
                         // Then it must be a file (if it exist).
                         var filePath = context.Path.CombineWithFilePath(segment);
                         var file = context.FileSystem.GetFile(filePath);
-                        if (file.Exists)
+                        if (file.Exists && context.ShouldInclude(file))
                         {
                             // File
                             context.AddResult(file);
@@ -234,7 +244,7 @@ namespace Cake.Core.IO.Globbing
                 foreach (var file in current.GetFiles("*", option))
                 {
                     var lastPath = file.Path.Segments.Last();
-                    if (node.IsMatch(lastPath))
+                    if (node.IsMatch(lastPath) && context.ShouldInclude(file))
                     {
                         result.Add(file);
                     }

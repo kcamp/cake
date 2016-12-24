@@ -78,6 +78,39 @@ namespace Cake.Common.IO
         }
 
         /// <summary>
+        /// Gets all files matching the specified pattern.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// Func&lt;IFileSystemInfo, bool&gt; exclude_ascx_cs =
+        ///     fileSystemInfo => !fileSystemInfo.Path.FullPath.EndsWith(
+        ///         ".ascx.cs", StringComparison.OrdinalIgnoreCase);
+        ///
+        /// var files = GetFiles("./**/*.cs", exclude_ascx_cs);
+        /// foreach(var file in files)
+        /// {
+        ///     Information("File: {0}", file);
+        /// }
+        /// </code>
+        /// </example>
+        /// <param name="context">The context.</param>
+        /// <param name="pattern">The glob pattern to match.</param>
+        /// <param name="predicate">The predicate used to filter directories based on file system information.</param>
+        /// <returns>A <see cref="FilePathCollection" />.</returns>
+        [CakeMethodAlias]
+        [CakeAliasCategory("Files")]
+        public static FilePathCollection GetFiles(this ICakeContext context, string pattern, Func<IFile, bool> predicate)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            return new FilePathCollection(context.Globber.Match(pattern, predicate).OfType<FilePath>(),
+                new PathComparer(context.Environment.Platform.IsUnix()));
+        }
+
+        /// <summary>
         /// Gets all directory matching the specified pattern.
         /// </summary>
         /// <example>

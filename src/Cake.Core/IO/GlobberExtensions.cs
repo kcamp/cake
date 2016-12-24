@@ -57,7 +57,7 @@ namespace Cake.Core.IO
             {
                 throw new ArgumentNullException(nameof(globber));
             }
-            return globber.Match(pattern, null);
+            return globber.Match(pattern, (Func<IDirectory, bool>)null);
         }
     }
 }

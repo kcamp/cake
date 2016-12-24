@@ -21,5 +21,26 @@ namespace Cake.Core.IO
         ///   <see cref="Path" /> instances matching the specified pattern.
         /// </returns>
         IEnumerable<Path> Match(string pattern, Func<IDirectory, bool> predicate);
+
+        /// <summary>
+        /// Returns <see cref="Path" /> instances matching the specified pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to match.</param>
+        /// <param name="predicate">The predicate used to filter files based on file system information.</param>
+        /// <returns>
+        ///   <see cref="Path" /> instances matching the specified pattern.
+        /// </returns>
+        IEnumerable<Path> Match(string pattern, Func<IFile, bool> predicate);
+
+        /// <summary>
+        /// Returns <see cref="Path" /> instances matching the specified pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to match.</param>
+        /// <param name="directoryPredicate">The predicate used to filter directories based on file system information.</param>
+        /// <param name="filePredicate">The predicate used to filter files based on file system information.</param>
+        /// <returns>
+        ///   <see cref="Path" /> instances matching the specified pattern.
+        /// </returns>
+        IEnumerable<Path> Match(string pattern, Func<IDirectory, bool> directoryPredicate, Func<IFile, bool> filePredicate);
     }
 }

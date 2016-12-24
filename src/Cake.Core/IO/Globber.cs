@@ -60,11 +60,56 @@ namespace Cake.Core.IO
                 return Enumerable.Empty<Path>();
             }
 
+            return Match(pattern, predicate, null);
+        }
+
+        /// <summary>
+        /// Returns <see cref="Path" /> instances matching the specified pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to match.</param>
+        /// <param name="predicate">The predicate used to filter files based on file system information.</param>
+        /// <returns>
+        ///   <see cref="Path" /> instances matching the specified pattern.
+        /// </returns>
+        public IEnumerable<Path> Match(string pattern, Func<IFile, bool> predicate)
+        {
+            if (pattern == null)
+            {
+                throw new ArgumentNullException(nameof(pattern));
+            }
+            if (string.IsNullOrWhiteSpace(pattern))
+            {
+                return Enumerable.Empty<Path>();
+            }
+
+            return Match(pattern, null, predicate);
+        }
+
+        /// <summary>
+        /// Returns <see cref="Path" /> instances matching the specified pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to match.</param>
+        /// <param name="directoryPredicate">The predicate used to filter directories based on file system information.</param>
+        /// <param name="filePredicate">The predicate used to filter files based on file system information.</param>
+        /// <returns>
+        ///   <see cref="Path" /> instances matching the specified pattern.
+        /// </returns>
+        public IEnumerable<Path> Match(string pattern, Func<IDirectory, bool> directoryPredicate, Func<IFile, bool> filePredicate)
+        {
+            if (pattern == null)
+            {
+                throw new ArgumentNullException(nameof(pattern));
+            }
+            if (string.IsNullOrWhiteSpace(pattern))
+            {
+                return Enumerable.Empty<Path>();
+            }
+
             // Parse the pattern into an AST.
             var root = _parser.Parse(pattern, _environment.Platform.IsUnix());
 
             // Visit all nodes in the parsed patterns and filter the result.
-            return _visitor.Walk(root, predicate)
+            return _visitor.Walk(root, directoryPredicate, filePredicate)
                 .Select(x => x.Path)
                 .Distinct(_comparer);
         }
