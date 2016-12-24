@@ -20,16 +20,6 @@ namespace Cake.Core.IO.Globbing
             _environment = environment;
         }
 
-        public IEnumerable<IFileSystemInfo> Walk(GlobNode node, Func<IDirectory, bool> predicate)
-        {
-            return Walk(node, predicate, null);
-        }
-
-        public IEnumerable<IFileSystemInfo> Walk(GlobNode node, Func<IFile, bool> predicate)
-        {
-            return Walk(node, null, predicate);
-        }
-
         public IEnumerable<IFileSystemInfo> Walk(GlobNode node, Func<IDirectory, bool> directoryPredicate, Func<IFile, bool> filePredicate)
         {
             var context = new GlobVisitorContext(_fileSystem, _environment, directoryPredicate, filePredicate);
