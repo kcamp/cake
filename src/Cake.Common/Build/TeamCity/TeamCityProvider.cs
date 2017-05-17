@@ -4,9 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
 using Cake.Common.Build.TeamCity.Data;
 using Cake.Core;
 using Cake.Core.Diagnostics;
@@ -19,11 +16,8 @@ namespace Cake.Common.Build.TeamCity
     /// </summary>
     public sealed class TeamCityProvider : ITeamCityProvider
     {
-        private const string MessagePrefix = "##teamcity[";
-        private const string MessagePostfix = "]";
-        private static readonly Dictionary<string, string> _sanitizationTokens;
         private readonly ICakeEnvironment _environment;
-        private readonly ICakeLog _log;
+        private readonly TeamCityMessageServiceFormatter _formatter;
 
         /// <summary>
         /// Gets the TeamCity environment.
@@ -75,19 +69,6 @@ namespace Cake.Common.Build.TeamCity
         /// </example>
         public TeamCityEnvironmentInfo Environment { get; }
 
-        static TeamCityProvider()
-        {
-            _sanitizationTokens = new Dictionary<string, string>
-            {
-                { "|", "||" },
-                { "\'", "|\'" },
-                { "\n", "|n" },
-                { "\r", "|r" },
-                { "[", "|[" },
-                { "]", "|]" }
-            };
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TeamCityProvider"/> class.
         /// </summary>
@@ -100,13 +81,8 @@ namespace Cake.Common.Build.TeamCity
                 throw new ArgumentNullException(nameof(environment));
             }
 
-            if (log == null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
-
             _environment = environment;
-            _log = log;
+            _formatter = new TeamCityMessageServiceFormatter(log);
 
             Environment = new TeamCityEnvironmentInfo(environment);
         }
@@ -312,31 +288,14 @@ namespace Cake.Common.Build.TeamCity
             WriteServiceMessage(messageName, new Dictionary<string, string> { { attributeName, attributeValue } });
         }
 
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines", Justification = "Reviewed.")]
-        private void WriteServiceMessage(string messageName, Dictionary<string, string> values)
+        /// <summary>
+        /// Writes the service message to TeamCity.
+        /// </summary>
+        /// <param name="messageName">Name of the message.</param>
+        /// <param name="values">The name/value parameters.</param>
+        public void WriteServiceMessage(string messageName, Dictionary<string, string> values)
         {
-            var valueString =
-                string.Join(" ",
-                    values
-                        .Select(keypair =>
-                        {
-                            if (string.IsNullOrWhiteSpace(keypair.Key))
-                            {
-                                return string.Format(CultureInfo.InvariantCulture, "'{0}'", Sanitize(keypair.Value));
-                            }
-                            return string.Format(CultureInfo.InvariantCulture, "{0}='{1}'", keypair.Key, Sanitize(keypair.Value));
-                        })
-                        .ToArray());
-            _log.Write(Verbosity.Quiet, LogLevel.Information, "{0}{1} {2}{3}", MessagePrefix, messageName, valueString, MessagePostfix);
-        }
-
-        private static string Sanitize(string source)
-        {
-            foreach (var charPair in _sanitizationTokens)
-            {
-                source = source.Replace(charPair.Key, charPair.Value);
-            }
-            return source;
+            _formatter.WriteServiceMessage(messageName, values);
         }
     }
 }
