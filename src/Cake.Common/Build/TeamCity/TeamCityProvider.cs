@@ -14,7 +14,7 @@ namespace Cake.Common.Build.TeamCity
     /// <summary>
     /// Responsible for communicating with TeamCity.
     /// </summary>
-    public sealed class TeamCityProvider : ITeamCityProvider
+    public sealed class TeamCityProvider : ITeamCityProvider2
     {
         private readonly ICakeEnvironment _environment;
         private readonly TeamCityMessageServiceFormatter _formatter;

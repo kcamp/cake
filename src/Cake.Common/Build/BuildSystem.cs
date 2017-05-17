@@ -41,6 +41,49 @@ namespace Cake.Common.Build
         /// <param name="tfBuildProvider">The TF Build provider.</param>
         public BuildSystem(
             IAppVeyorProvider appVeyorProvider,
+            ITeamCityProvider2 teamCityProvider,
+            IMyGetProvider myGetProvider,
+            IBambooProvider bambooProvider,
+            IContinuaCIProvider continuaCIProvider,
+            IJenkinsProvider jenkinsProvider,
+            IBitriseProvider bitriseProvider,
+            ITravisCIProvider travisCIProvider,
+            IBitbucketPipelinesProvider bitbucketPipelinesProvider,
+            IGoCDProvider goCDProvider,
+            IGitLabCIProvider gitlabCIProvider,
+            ITFBuildProvider tfBuildProvider)
+            : this(appVeyorProvider,
+                  (ITeamCityProvider)teamCityProvider,
+                  myGetProvider,
+                  bambooProvider,
+                  continuaCIProvider,
+                  jenkinsProvider,
+                  bitriseProvider,
+                  travisCIProvider,
+                  bitbucketPipelinesProvider,
+                  goCDProvider,
+                  gitlabCIProvider,
+                  tfBuildProvider)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BuildSystem" /> class.
+        /// </summary>
+        /// <param name="appVeyorProvider">The AppVeyor Provider.</param>
+        /// <param name="teamCityProvider">The TeamCity Provider.</param>
+        /// <param name="myGetProvider">The MyGet Provider.</param>
+        /// <param name="bambooProvider">The Bamboo Provider.</param>
+        /// <param name="continuaCIProvider">The Continua CI Provider.</param>
+        /// <param name="jenkinsProvider">The Jenkins Provider.</param>
+        /// <param name="bitriseProvider">The Bitrise Provider.</param>
+        /// <param name="travisCIProvider">The Travis CI provider.</param>
+        /// <param name="bitbucketPipelinesProvider">The Bitbucket Pipelines provider.</param>
+        /// <param name="goCDProvider">The Go.CD provider.</param>
+        /// <param name="gitlabCIProvider">The GitLab CI provider.</param>
+        /// <param name="tfBuildProvider">The TF Build provider.</param>
+        public BuildSystem(
+            IAppVeyorProvider appVeyorProvider,
             ITeamCityProvider teamCityProvider,
             IMyGetProvider myGetProvider,
             IBambooProvider bambooProvider,
@@ -177,6 +220,20 @@ namespace Cake.Common.Build
         /// </code>
         /// </example>
         public ITeamCityProvider TeamCity { get; }
+
+        /// <summary>
+        /// Gets the TeamCity Provider.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// if(BuildSystem.IsRunningOnTeamCiy)
+        /// {
+        ///     // Set the build number.
+        ///     BuildSystem.TeamCity2.SetBuildNumber("1.2.3.4");
+        /// }
+        /// </code>
+        /// </example>
+        public ITeamCityProvider2 TeamCity2 => TeamCity as ITeamCityProvider2;
 
         /// <summary>
         /// Gets a value indicating whether the current build is running on MyGet.

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 
 namespace Cake.Common.Build.TeamCity
@@ -16,17 +17,17 @@ namespace Cake.Common.Build.TeamCity
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="name">The test suite name.</param>
-        public static void TestSuiteStarted(this ITeamCityProvider provider, string name)
+        public static void TestSuiteStarted(this ITeamCityProvider2 provider, string name)
         {
-            WriteServiceMessage("testSuiteStarted", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testSuiteStarted", new Dictionary<string, string>
             {
                 { "name", name }
             });
-        }
-
-        private static void WriteServiceMessage(string message, Dictionary<string, string> values)
-        {
-            throw new System.NotImplementedException();
         }
 
         /// <summary>
@@ -34,9 +35,14 @@ namespace Cake.Common.Build.TeamCity
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="name">The test suite name.</param>
-        public static void TestSuiteFinished(this ITeamCityProvider provider, string name)
+        public static void TestSuiteFinished(this ITeamCityProvider2 provider, string name)
         {
-            WriteServiceMessage("testSuiteFinished", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testSuiteFinished", new Dictionary<string, string>
             {
                 { "name", name }
             });
@@ -48,9 +54,14 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="provider">The provider.</param>
         /// <param name="name">The name of the test.</param>
         /// <param name="captureStandardOutput">if set to <c>true</c> TeamCity should capture standard output as part of the test.</param>
-        public static void TestStarted(this ITeamCityProvider provider, string name, bool captureStandardOutput = false)
+        public static void TestStarted(this ITeamCityProvider2 provider, string name, bool captureStandardOutput = false)
         {
-            WriteServiceMessage("testStarted", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testStarted", new Dictionary<string, string>
             {
                 { "name", name },
                 { "captureStandardOutput", captureStandardOutput.ToString().ToLower() }
@@ -63,8 +74,13 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="provider">The provider.</param>
         /// <param name="name">The name of the test.</param>
         /// <param name="durationMilliseconds">The duration of the test in milliseconds (optional).</param>
-        public static void TestFinished(this ITeamCityProvider provider, string name, int? durationMilliseconds = null)
+        public static void TestFinished(this ITeamCityProvider2 provider, string name, int? durationMilliseconds = null)
         {
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
             var values = new Dictionary<string, string> { { "name", name } };
 
             if (durationMilliseconds.HasValue)
@@ -72,7 +88,7 @@ namespace Cake.Common.Build.TeamCity
                 values.Add("duration", durationMilliseconds.Value.ToString());
             }
 
-            WriteServiceMessage("testFinished", values);
+            provider.WriteServiceMessage("testFinished", values);
         }
 
         /// <summary>
@@ -81,9 +97,14 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="provider">The provider.</param>
         /// <param name="name">The name.</param>
         /// <param name="output">The output.</param>
-        public static void TestOutput(this ITeamCityProvider provider, string name, string output)
+        public static void TestOutput(this ITeamCityProvider2 provider, string name, string output)
         {
-            WriteServiceMessage("testStdOut", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testStdOut", new Dictionary<string, string>
             {
                 { "name", name },
                 { "out", output }
@@ -96,9 +117,14 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="provider">The provider.</param>
         /// <param name="name">The name.</param>
         /// <param name="output">The output.</param>
-        public static void TestError(this ITeamCityProvider provider, string name, string output)
+        public static void TestError(this ITeamCityProvider2 provider, string name, string output)
         {
-            WriteServiceMessage("testStdErr", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testStdErr", new Dictionary<string, string>
             {
                 { "name", name },
                 { "out", output }
@@ -111,9 +137,14 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="provider">The provider.</param>
         /// <param name="name">The name of the test.</param>
         /// <param name="reason">The reason.</param>
-        public static void TestIgnored(this ITeamCityProvider provider, string name, string reason)
+        public static void TestIgnored(this ITeamCityProvider2 provider, string name, string reason)
         {
-            WriteServiceMessage("testIgnored", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testIgnored", new Dictionary<string, string>
             {
                 { "name", name },
                 { "message", reason }
@@ -127,9 +158,14 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="name">The name of the test.</param>
         /// <param name="message">The message.</param>
         /// <param name="details">The details of the failure.</param>
-        public static void TestFailed(this ITeamCityProvider provider, string name, string message, string details = null)
+        public static void TestFailed(this ITeamCityProvider2 provider, string name, string message, string details = null)
         {
-            WriteServiceMessage("testFailed", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testFailed", new Dictionary<string, string>
             {
                 { "name", name },
                 { "message", message },
@@ -146,9 +182,14 @@ namespace Cake.Common.Build.TeamCity
         /// <param name="expected">The expected value.</param>
         /// <param name="actual">The actual value.</param>
         /// <param name="details">The details of the failure.</param>
-        public static void TestFailed(this ITeamCityProvider provider, string name, string message, object expected, object actual, string details = null)
+        public static void TestFailed(this ITeamCityProvider2 provider, string name, string message, object expected, object actual, string details = null)
         {
-            WriteServiceMessage("testFailed", new Dictionary<string, string>
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            provider.WriteServiceMessage("testFailed", new Dictionary<string, string>
             {
                 { "type", "comparisonFailure" },
                 { "name", name },
