@@ -236,11 +236,11 @@ namespace Cake.Core.Tests.Unit.IO
 
                     // Then
                     Assert.Equal(5, result.Length);
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qex.c");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Baz/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Baz/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Bar/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Qex.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Baz/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Baz/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Bar/Qux.c");
                 }
             }
 
@@ -259,13 +259,13 @@ namespace Cake.Core.Tests.Unit.IO
 
                     // Then
                     Assert.Equal(7, result.Length);
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qex.c");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Qux.h");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Baz/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Foo/Bar/Baz/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Bar/Qux.c");
-                    Assert.ContainsFilePath(result, "/Working/Bar/Qux.h");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Qex.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Qux.h");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Baz/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Foo/Bar/Baz/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Bar/Qux.c");
+                    AssertEx.ContainsFilePath(result, "/Working/Bar/Qux.h");
                 }
             }
 
